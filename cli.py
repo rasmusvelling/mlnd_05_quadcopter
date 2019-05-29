@@ -1,4 +1,6 @@
 import sys
+from joblib import Parallel, delayed
+import multiprocessing
 import numpy as np
 import pandas as pd
 from task import Task
@@ -51,6 +53,7 @@ def plot_rewards(all_results, save_to=None):
 ########################
 # Main function
 def do_learning(
+    batch="",
     num_episodes=500,
     runtime=5.,
     # we want the quad copter to go high up!
@@ -103,18 +106,23 @@ def do_learning(
             if done:
                 if i_episode % 100 == 0:
                     print("Done:  " + str(i_episode))
-                    plot_rewards(all_results, save_to="plots\\plot_"+str(i_episode)+".png")
+                    plot_rewards(all_results, save_to="plots\\"+batch+"_plot_"+str(i_episode)+".png")
+                    df_rew = make_df_rewards(all_results)
+                    quadcopter_3d_plot(
+                        all_results[df_rew['Reward'].idxmax()],
+                        save_to="plots\\"+batch+"_best_run.png")
+
                 break
         all_results[i_episode] = results
         sys.stdout.flush()
 
     return all_results
 
-all_results = do_learning(num_episodes=1000)
 
-plot_rewards(all_results)
+num_cores = multiprocessing.cpu_count()
+results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch="batch_"+str(i)) for i in range(4))
 
-df_rew = make_df_rewards(all_results)
-
-quadcopter_3d_plot(all_results[len(all_results)], vars=['x', 'y', 'z'], title='')
-quadcopter_3d_plot(all_results[8])
+for i in range(5):
+    all_results = do_learning(
+        batch="batch_"+str(i),
+        num_episodes=1000)
