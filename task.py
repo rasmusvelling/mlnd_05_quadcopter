@@ -28,15 +28,11 @@ class Task():
 
     def get_reward(self, done):
         """Uses current pose of sim to return reward."""
-        score_x = 1/((abs(self.sim.pose[0] - self.target_pos[0]) + 0.01))
-        score_y = 1/((abs(self.sim.pose[1] - self.target_pos[1]) + 0.01))
-        score_z = 1000/((abs(self.sim.pose[2] - self.target_pos[2]) + 0.01))
+        score_x = 100/(1+(abs(self.sim.pose[0] - self.target_pos[0])))
+        score_y = 100/(1+(abs(self.sim.pose[1] - self.target_pos[1])))
+        score_z = 1000/(1+(abs(self.sim.pose[2] - self.target_pos[2])))
         #reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
         reward = score_x + score_y + score_z
-
-        # harsh penalty for running out of time or flying out of bounds
-        if done:
-            reward += -1000
 
         return reward
 
