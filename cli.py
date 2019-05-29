@@ -25,7 +25,8 @@ def quadcopter_3d_plot(results, vars=['x', 'y', 'z'], title=''):
 
 
 ########################
-num_episodes = 50
+num_episodes = 10
+runtime = 50.
 
 # we want the quad copter to go high up!
 target_pos = np.array([0., 0., 100.])
@@ -33,7 +34,8 @@ target_pos = np.array([0., 0., 100.])
 init_pos = np.array([0., 0., 10., 0., 0., 0.])
 task = Task(
     target_pos=target_pos,
-    init_pose=init_pos
+    init_pose=init_pos,
+    runtime=runtime
 )
 agent = Agent(
     task=task,
@@ -75,7 +77,5 @@ for i_episode in range(1, num_episodes+1):
             break
     all_results[i_episode] = results
     sys.stdout.flush()
-
-
 
 quadcopter_3d_plot(all_results[len(all_results)], vars=['x', 'y', 'z'], title='')
