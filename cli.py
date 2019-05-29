@@ -25,7 +25,7 @@ def quadcopter_3d_plot(results, vars=['x', 'y', 'z'], title=''):
 
 
 ########################
-num_episodes = 10
+num_episodes = 50
 
 # we want the quad copter to go high up!
 target_pos = np.array([0., 0., 100.])
@@ -35,7 +35,10 @@ task = Task(
     target_pos=target_pos,
     init_pose=init_pos
 )
-agent = Agent(task)
+agent = Agent(
+    task=task,
+    exploration_mu=0, exploration_theta=0.15, exploration_sigma=0.2, tau=0.01
+)
 
 labels = ['time', 'x', 'y', 'z', 'phi', 'theta', 'psi', 'x_velocity',
           'y_velocity', 'z_velocity', 'phi_velocity', 'theta_velocity',
