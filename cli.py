@@ -51,7 +51,7 @@ def plot_rewards(all_results, save_to=None):
 ########################
 # Main function
 def do_learning(
-    num_episodes=1000,
+    num_episodes=500,
     runtime=5.,
     # we want the quad copter to go high up!
     target_pos=np.array([0., 0., 75.]),
