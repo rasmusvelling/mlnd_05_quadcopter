@@ -89,7 +89,7 @@ def get_avg_score(results):
 # Main function
 def do_learning(
     batch="",
-    num_episodes=750,
+    num_episodes=800,
     runtime=5,
     # we want the quad copter to go high up!
     target_pos=np.array([0., 0., 35.]),
@@ -164,7 +164,7 @@ def do_learning(
     return all_results
 
 num_cores = multiprocessing.cpu_count()
-results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04d}".format(i)) for i in range(4))
+results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04d}".format(i)) for i in range(8))
 
 print("avg score:    " + str(get_avg_score(results)))
 
