@@ -12,7 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 #######################
 # Settings
 
-batch_name = "20190530_2030_"
+batch_name = "20190530_2245_"
 
 plt.interactive(False)
 
@@ -175,7 +175,7 @@ print("avg score:    " + str(get_avg_score(results)))
 #
 # df_rewards = make_df_rewards(all_results)
 # df_rewards['Reward'].idxmax()
-#quadcopter_3d_plot2(results=[all_results[x] for x in range(333, 334)])
+quadcopter_3d_plot2(results=[results[3][x] for x in range(1, 5)])
 #
 #
 # for i in range(len(results)):

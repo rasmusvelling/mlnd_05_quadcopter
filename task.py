@@ -28,21 +28,22 @@ class Task():
 
     def get_reward(self, done):
 
+        reward = 0
+
+        score_x = 100 / (1 + (abs(self.sim.pose[0] - self.target_pos[0])))
+        score_y = 100 / (1 + (abs(self.sim.pose[1] - self.target_pos[1])))
+        score_z = 1000 / (1 + (abs(self.sim.pose[2] - self.target_pos[2])))
+        reward = score_x + score_y + score_z
+
         # if distance to target pos is less than 2 get extra reward
         dist = ((self.sim.pose[0] - self.target_pos[0])**2 + (self.sim.pose[1] - self.target_pos[1])**2 +
                 (self.sim.pose[2] - self.target_pos[2])**2)**(1/2)
 
         if dist < 2.5:
-            reward = 2500
-        else:
-            score_x = 100/(1+(abs(self.sim.pose[0] - self.target_pos[0])))
-            score_y = 100/(1+(abs(self.sim.pose[1] - self.target_pos[1])))
-            score_z = 1000/(1+(abs(self.sim.pose[2] - self.target_pos[2])))
-            reward = score_x + score_y + score_z
+            reward += 2500
 
-        # done is time out or out of bounds, punish done (is try to stay in bounds as long as possible
-        if done:
-            reward += -10000
+        if dist < 5:
+            reward += 2500
 
         return reward
 
