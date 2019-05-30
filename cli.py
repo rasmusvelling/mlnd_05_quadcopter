@@ -12,7 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 #######################
 # Settings
 
-batch_name = "20190530_1900"
+batch_name = "20190530_1900_"
 
 plt.interactive(False)
 
