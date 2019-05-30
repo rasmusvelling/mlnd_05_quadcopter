@@ -27,12 +27,22 @@ class Task():
         self.target_pos = target_pos if target_pos is not None else np.array([0., 0., 10.]) 
 
     def get_reward(self, done):
-        """Uses current pose of sim to return reward."""
-        score_x = 100/(1+(abs(self.sim.pose[0] - self.target_pos[0])))
-        score_y = 100/(1+(abs(self.sim.pose[1] - self.target_pos[1])))
-        score_z = 1000/(1+(abs(self.sim.pose[2] - self.target_pos[2])))
-        #reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
-        reward = score_x + score_y + score_z
+
+        # if distance to target pos is less than 2 get extra reward
+        dist = ((self.sim.pose[0] - self.target_pos[0])**2 + (self.sim.pose[1] - self.target_pos[1])**2 +
+                (self.sim.pose[2] - self.target_pos[2])**2)**(1/2)
+
+        if dist < 2.5:
+            reward = 2500
+        else:
+            score_x = 100/(1+(abs(self.sim.pose[0] - self.target_pos[0])))
+            score_y = 100/(1+(abs(self.sim.pose[1] - self.target_pos[1])))
+            score_z = 1000/(1+(abs(self.sim.pose[2] - self.target_pos[2])))
+            reward = score_x + score_y + score_z
+
+        # done is time out or out of bounds, punish done (is try to stay in bounds as long as possible
+        if done:
+            reward += -10000
 
         return reward
 

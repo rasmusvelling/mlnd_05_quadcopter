@@ -12,7 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 #######################
 # Settings
 
-batch_name = "20190530_1900_"
+batch_name = "20190530_2030_"
 
 plt.interactive(False)
 
@@ -57,8 +57,6 @@ def quadcopter_3d_plot2(results, vars=['x', 'y', 'z'], title='', save_to=None):
         plt.savefig(save_to)
 
 
-
-
 def make_df_rewards(all_results):
     rewards_summed = {}
     for key, value in all_results.items():
@@ -77,12 +75,22 @@ def plot_rewards(all_results, save_to=None):
         plt.savefig(save_to)
 
 
+def get_avg_score(results):
+    score_per_episode = []
+    for res in results:
+        episodes = len(res)
+        df = make_df_rewards(res)
+        score_per_episode.append(df['Reward'].sum() / episodes)
+    score_per_episode = round(float(np.mean(score_per_episode)), ndigits=0)
+    return score_per_episode
+
+
 ########################
 # Main function
 def do_learning(
     batch="",
-    num_episodes=2500,
-    runtime=5.,
+    num_episodes=750,
+    runtime=5,
     # we want the quad copter to go high up!
     target_pos=np.array([0., 0., 35.]),
     init_pos=np.array([0., 0., 10., 0., 0., 0.]),
@@ -158,6 +166,8 @@ def do_learning(
 num_cores = multiprocessing.cpu_count()
 results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04d}".format(i)) for i in range(4))
 
+print("avg score:    " + str(get_avg_score(results)))
+
 
 # all_results = do_learning(
 #     batch="batch_",
@@ -165,7 +175,7 @@ results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04
 #
 # df_rewards = make_df_rewards(all_results)
 # df_rewards['Reward'].idxmax()
-# quadcopter_3d_plot2(results=[all_results[x] for x in range(333, 334)])
+#quadcopter_3d_plot2(results=[all_results[x] for x in range(333, 334)])
 #
 #
 # for i in range(len(results)):
