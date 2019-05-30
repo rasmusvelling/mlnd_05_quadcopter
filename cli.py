@@ -3,12 +3,19 @@ from joblib import Parallel, delayed
 import multiprocessing
 import numpy as np
 import pandas as pd
+import pickle
 from task import Task
 from agents.ddpg import Agent
-
 import matplotlib.pyplot as plt
-plt.interactive(False)
 from mpl_toolkits.mplot3d import Axes3D
+
+#######################
+# Settings
+
+batch_name = "20190530_1900"
+
+plt.interactive(False)
+
 
 #######################
 # Helper functions
@@ -30,6 +37,26 @@ def quadcopter_3d_plot(results, vars=['x', 'y', 'z'], title='', save_to=None):
         plt.show()
     else:
         plt.savefig(save_to)
+
+
+def quadcopter_3d_plot2(results, vars=['x', 'y', 'z'], title='', save_to=None):
+    fig = plt.figure(figsize=(8, 4), dpi=100)
+    ax = plt.axes(projection='3d')
+    for i in range(len(results)):
+        x = results[i][vars[0]]
+        y = results[i][vars[1]]
+        z = results[i][vars[2]]
+        c = results[i]['time']
+        ax.plot(x, y, z)
+
+    ax.set(xlabel=vars[0], ylabel=vars[1], zlabel=vars[2], title=title)
+
+    if save_to is None:
+        plt.show()
+    else:
+        plt.savefig(save_to)
+
+
 
 
 def make_df_rewards(all_results):
@@ -54,10 +81,10 @@ def plot_rewards(all_results, save_to=None):
 # Main function
 def do_learning(
     batch="",
-    num_episodes=500,
+    num_episodes=2500,
     runtime=5.,
     # we want the quad copter to go high up!
-    target_pos=np.array([0., 0., 75.]),
+    target_pos=np.array([0., 0., 35.]),
     init_pos=np.array([0., 0., 10., 0., 0., 0.]),
 ):
 
@@ -106,23 +133,47 @@ def do_learning(
             if done:
                 if i_episode % 100 == 0:
                     print("Done:  " + str(i_episode))
-                    plot_rewards(all_results, save_to="plots\\"+batch+"_plot_"+str(i_episode)+".png")
-                    df_rew = make_df_rewards(all_results)
-                    quadcopter_3d_plot(
-                        all_results[df_rew['Reward'].idxmax()],
-                        save_to="plots\\"+batch+"_best_run.png")
+                    plot_rewards(all_results, save_to="plots\\"+batch+"_plot.png")
 
+                    # filename = "plots\\"+batch+"_agent.pkl"
+                    # outfile = open(filename, 'w')
+                    # pickle.dump(agent, outfile)
+                    # outfile.close()
+
+                    filename = "plots\\" + batch + "_all_results.pkl"
+                    outfile = open(filename, 'wb')
+                    pickle.dump(all_results, outfile)
+                    outfile.close()
+
+                    # df_rew = make_df_rewards(all_results)
+                    # quadcopter_3d_plot(
+                    #     all_results[df_rew['Reward'].idxmax()],
+                    #     save_to="plots\\"+batch+"_best_run.png")
                 break
         all_results[i_episode] = results
         sys.stdout.flush()
 
     return all_results
 
-
 num_cores = multiprocessing.cpu_count()
-results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch="batch_"+str(i)) for i in range(4))
+results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04d}".format(i)) for i in range(4))
 
-for i in range(5):
-    all_results = do_learning(
-        batch="batch_"+str(i),
-        num_episodes=1000)
+
+# all_results = do_learning(
+#     batch="batch_",
+#     num_episodes=1000)
+#
+# df_rewards = make_df_rewards(all_results)
+# df_rewards['Reward'].idxmax()
+# quadcopter_3d_plot2(results=[all_results[x] for x in range(333, 334)])
+#
+#
+# for i in range(len(results)):
+#     all_results = results[i]
+#     batch = "batch_"+str(i)
+#     plot_rewards(all_results, save_to="plots\\"+batch+"_plot.png")
+#     df_rew = make_df_rewards(all_results)
+#     quadcopter_3d_plot(
+#        all_results[df_rew['Reward'].idxmax()],
+#        save_to="plots\\"+batch+"_best_run.png")
+#
