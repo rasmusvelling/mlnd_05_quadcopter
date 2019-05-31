@@ -12,8 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 #######################
 # Settings
 
-batch_name = "20190530_2245_"
-
+batch_name = "20190531_0800_"
 plt.interactive(False)
 
 
@@ -161,12 +160,10 @@ def do_learning(
         all_results[i_episode] = results
         sys.stdout.flush()
 
-    return all_results
+    return 1
 
 num_cores = multiprocessing.cpu_count()
-results = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04d}".format(i)) for i in range(8))
-
-print("avg score:    " + str(get_avg_score(results)))
+oo = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04d}".format(i)) for i in range(8))
 
 
 # all_results = do_learning(
@@ -175,7 +172,8 @@ print("avg score:    " + str(get_avg_score(results)))
 #
 # df_rewards = make_df_rewards(all_results)
 # df_rewards['Reward'].idxmax()
-quadcopter_3d_plot2(results=[results[3][x] for x in range(1, 5)])
+# all_results = pickle.load( open("plots\\" + batch_name + "{:04d}".format(0) + "_all_results.pkl", "rb" ))
+# quadcopter_3d_plot2(results=[all_results[x] for x in range(500, 615)])
 #
 #
 # for i in range(len(results)):
