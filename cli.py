@@ -12,7 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 #######################
 # Settings
 
-batch_name = "20190531_0800_"
+batch_name = "20190530_2245_"
 plt.interactive(False)
 
 
@@ -173,7 +173,11 @@ oo = Parallel(n_jobs=num_cores)(delayed(do_learning)(batch=batch_name+"{:04d}".f
 # df_rewards = make_df_rewards(all_results)
 # df_rewards['Reward'].idxmax()
 # all_results = pickle.load( open("plots\\" + batch_name + "{:04d}".format(0) + "_all_results.pkl", "rb" ))
-# quadcopter_3d_plot2(results=[all_results[x] for x in range(500, 615)])
+# quadcopter_3d_plot2(results=[all_results[x] for x in range(750, 800)],  save_to="plots\\"+batch_name+"0000_flights_750_800.png")
+#
+# all_results = pickle.load( open("plots\\" + batch_name + "{:04d}".format(5) + "_all_results.pkl", "rb" ))
+# quadcopter_3d_plot2(results=[all_results[x] for x in range(750, 800)],  save_to="plots\\"+batch_name+"0005_flights_750_800.png")
+#
 #
 #
 # for i in range(len(results)):
